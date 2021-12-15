@@ -193,7 +193,6 @@ for epoch in range(opt.n_epochs):
         # -----------------
         #  Train Generator
         # -----------------
-
         optimizer_G.zero_grad()
 
         # Sample noise and labels as generator input
