@@ -120,16 +120,14 @@ class Generator(nn.Module):
         self.decoder  = self.make_decoder()
   
     def make_encoder(self):
-        layers = []
-        # conv_layers = []
+        layers = [] 
         layers_channels = [opt.n_joint * 4, 384, 384, 512, 512, 768, 1024]
 
         for i in range(1, len(layers_channels)): 
             layer = ModifiedResidualBlock(
                 layers_channels[i - 1], layers_channels[i], 4, 2, 1, 1 / i
             )
-            layers.append(layer)
-            # conv_layers.append(layer.conv)
+            layers.append(layer) 
 
         return nn.Sequential(*layers) 
     
@@ -185,8 +183,7 @@ class Discriminator(nn.Module):
         self.layer3 = ModifiedResidualBlock(512, 512, 4, 2, 1, 1 / 3)
         self.layer4 = ModifiedResidualBlock(512, 512, 4, 2, 1, 1 / 4)
         self.layer5 = ModifiedResidualBlock(512, 1024, 4, 2,1, 1 / 5)
-        self.layer6 = ModifiedResidualBlock(1024, 1024, 4, 2, 1, 1 / 6)
-        # self.layer7 = nn.Conv1d(1024, 1, kernel_size=1, stride=1, padding=0)
+        self.layer6 = ModifiedResidualBlock(1024, 1024, 4, 2, 1, 1 / 6) 
         self.adv_layer = nn.Linear(1024 * 3, 1) # 32768
             
     def forward(self, x):
@@ -274,31 +271,30 @@ for epoch in range(opt.n_epochs):
         
         # backward
         optimizer_G.zero_grad()
-        g_loss.backward() # ! retain graph = True
+        g_loss.backward() 
         
         
         # gradient descent 
         optimizer_G.step()
-
-        # ---------------------
-        #  Train Discriminator
-        # ---------------------  
+ 
         
-        optimizer_D.zero_grad()
-        d_selected_fr = random.randint(0,100)
-        # dis =  discriminator(gen_imgs[:,:,selected_frame: selected_frame + opt.dis_input_frame])
-        
-        
-        # forward
-        real_loss =  torch.mean((discriminator(real_imgs[:,:,g_selected_fr: g_selected_fr + opt.dis_input_frame]) - real) ** 2) 
-        fake_loss =  torch.mean((discriminator(gen_imgs[:,:,g_selected_fr: g_selected_fr + opt.dis_input_frame].detach()) - fake) ** 2)
-        d_loss = 0.5 * (real_loss+ fake_loss)
-        
-        # backward 
-        d_loss.backward() 
-        
-        # gradient descent
-        optimizer_D.step()
+        if i % 6  == 0: 
+            # ---------------------
+            #  Train Discriminator
+            # ---------------------  
+            optimizer_D.zero_grad()
+            d_selected_fr = random.randint(0,100) 
+            
+            # forward
+            real_loss =  torch.mean((discriminator(real_imgs[:,:,g_selected_fr: g_selected_fr + opt.dis_input_frame]) - real) ** 2) 
+            fake_loss =  torch.mean((discriminator(gen_imgs[:,:,g_selected_fr: g_selected_fr + opt.dis_input_frame].detach()) - fake) ** 2)
+            d_loss = 0.5 * (real_loss+ fake_loss)
+            
+            # backward 
+            d_loss.backward()
+            
+            # gradient descent
+            optimizer_D.step()
 
         print(
             "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"

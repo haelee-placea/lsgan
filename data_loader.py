@@ -11,10 +11,13 @@ from glob import glob
 
 random.seed(42)
 
-def preprocess(dict_data,is_transform,is_mask,global_kpt = 'Pelvis'):
+def preprocess(dict_data,is_transform, is_mask, global_kpt = 'Pelvis'):
     joints = dict_data['kpt3d_body']
     mask = dict_data['kpt3d_body_mask']
-     
+    
+    if not mask:
+        print(not mask)
+        
     if not is_transform:
         return [[float(i),*j] for i,j in zip(mask,joints)]
 
