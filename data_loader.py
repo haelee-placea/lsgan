@@ -82,7 +82,7 @@ class PanopticDataset(data.Dataset):
 
 if __name__ == "__main__":
         
-    dataset = PanopticDataset(dataset='my_panoptic',json_path='test_list.json',input_frame = 1024)
+    dataset = PanopticDataset(dataset='my_panoptic',json_path='test_list.json', input_frame = 1024)
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=True)
     
     for data in dataloader:
