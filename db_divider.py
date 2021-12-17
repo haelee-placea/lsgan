@@ -50,7 +50,6 @@ def main(_args):
             elif prev_valid == '1' and frame_valid[i] == '0':  # 별로가 시작될 때
 
                 if int(iter_end) - int(iter_start) + 1 > 512:
-
                     print(f'{start_num + iter_start} {start_num + iter_end} {int(iter_end) - int(iter_start) + 1}')
                     folder_count += 1
                     to_folder = os.path.join(_args.output_folder, clip_name.split('/')[0], str(folder_count))
@@ -67,6 +66,18 @@ def main(_args):
 
             prev_valid = frame_valid[i]
 
+        if int(iter_end) - int(iter_start) + 1 > 512:
+            print(f'{start_num + iter_start} {start_num + iter_end} {int(iter_end) - int(iter_start) + 1}')
+            folder_count += 1
+            to_folder = os.path.join(_args.output_folder, clip_name.split('/')[0], str(folder_count))
+            for j in range(start_num + iter_start, start_num + iter_end + 1):
+                from_path = os.path.join(folder_path, f'frame_{str(j).zfill(6)}.json')
+                to_path = os.path.join(to_folder, f'frame_{str(j).zfill(6)}.json')
+
+                if not os.path.exists(to_folder):
+                    os.makedirs(to_folder)
+
+                shutil.copy(from_path, to_path)
 
     f.close()
 
@@ -77,7 +88,7 @@ def main(_args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-input-folder", "-input-folder", type=str, default="./my_panoptic2/annotations/171204_pose1", help="input frame folder name")
+    parser.add_argument("-input-folder", "-input-folder", type=str, default="./my_panoptic/annotations/171204_pose1", help="input frame folder name")
     parser.add_argument("-output-folder", "-output-folder", type=str, default="./my_panoptic2/annotations/171204_pose_seg", help="output frame folder name")
 
     args = parser.parse_args()
